@@ -29,7 +29,7 @@ const ShoeCard = ({
     ? 'on-sale'
     : isNewShoe(releaseDate)
       ? 'new-release'
-      : 'default'
+      : 'default';
 
   return (
     <Link href={`/shoe/${slug}`}>
@@ -37,13 +37,16 @@ const ShoeCard = ({
         <ImageWrapper>
           <Image alt="" src={imageSrc} />
         </ImageWrapper>
+        {variant === 'on-sale' && (<SaleTag>Sale</SaleTag>)}
+        {variant === 'new-release' && (<NewReleaseTag>Just released!</NewReleaseTag>)}
         <Spacer size={12} />
         <Row>
           <Name>{name}</Name>
-          <Price>{formatPrice(price)}</Price>
+          <Price variant={variant}>{formatPrice(price)}</Price>
         </Row>
         <Row>
           <ColorInfo>{pluralize('Color', numOfColors)}</ColorInfo>
+          {variant === 'on-sale' && (<SalePrice>{formatPrice(salePrice)}</SalePrice>)}
         </Row>
       </Wrapper>
     </Link>
@@ -56,7 +59,9 @@ const Link = styled.a`
   flex: 1 1 340px;
 `;
 
-const Wrapper = styled.article``;
+const Wrapper = styled.article`
+  position: relative;
+`;
 
 const ImageWrapper = styled.div`
   position: relative;
@@ -68,6 +73,8 @@ const Image = styled.img`
 
 const Row = styled.div`
   font-size: 1rem;
+  display: flex;
+  justify-content: space-between;
 `;
 
 const Name = styled.h3`
@@ -75,7 +82,10 @@ const Name = styled.h3`
   color: ${COLORS.gray[900]};
 `;
 
-const Price = styled.span``;
+const Price = styled.span`
+  text-decoration: ${props => props.variant === 'on-sale' && 'line-through'};
+  color: ${props => props.variant === 'on-sale' && COLORS.gray[700]};
+`;
 
 const ColorInfo = styled.p`
   color: ${COLORS.gray[700]};
@@ -84,6 +94,23 @@ const ColorInfo = styled.p`
 const SalePrice = styled.span`
   font-weight: ${WEIGHTS.medium};
   color: ${COLORS.primary};
+`;
+
+const Tag = styled.span`
+  color: ${COLORS.white};
+  position: absolute;
+  top: 12px;
+  right: -4px;
+  padding: 8px 12px;
+  border-radius: 2px;
+`;
+
+const SaleTag = styled(Tag)`
+  background-color: ${COLORS.primary};
+`;
+
+const NewReleaseTag = styled(Tag)`
+  background-color: ${COLORS.secondary};
 `;
 
 export default ShoeCard;
